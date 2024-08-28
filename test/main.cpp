@@ -13,6 +13,7 @@
 #include "imgui.h"
 #include "imgui_impl_win32.h"
 #include "imgui_impl_dx12.h"
+#include "implot.h"
 #include <d3d12.h>
 #include <dxgi1_4.h>
 #include <tchar.h>
@@ -87,6 +88,7 @@ int main(int, char**)
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
+    ImPlot::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
@@ -119,9 +121,15 @@ int main(int, char**)
     //IM_ASSERT(font != nullptr);
 
     // Our state
-    bool show_demo_window = true;
-    bool show_another_window = false;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+    
+    static float x_data[100];
+    static float y_data[100];
+    for (int i = 0; i < 100; ++i) {
+        x_data[i] = i * 0.1f;          // x values (0.0, 0.1, 0.2, ...)
+        y_data[i] = std::sin(x_data[i]);    // y values (sin wave)
+    }
 
     // Main loop
     bool done = false;
@@ -153,20 +161,26 @@ int main(int, char**)
         ImGui_ImplWin32_NewFrame();
         ImGui::NewFrame();
 
-        // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
-        if (show_demo_window)
-            ImGui::ShowDemoWindow(&show_demo_window);
-
         // 2. Show a simple window that we create ourselves. We use a Begin/End pair to create a named window.
         {
+            
+            ImGuiWindowFlags window_flags = 0;
+            window_flags |= ImGuiWindowFlags_NoTitleBar;
+            window_flags |= ImGuiWindowFlags_NoScrollbar;
+            window_flags |= ImGuiWindowFlags_NoMove;
+            window_flags |= ImGuiWindowFlags_NoResize;
+            window_flags |= ImGuiWindowFlags_NoCollapse;
+            window_flags |= ImGuiWindowFlags_NoBackground;
+
+            ImGui::SetNextWindowPos(ImVec2(0.0f, 0.0f));
+            ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
+
             static float f = 0.0f;
             static int counter = 0;
 
-            ImGui::Begin("Hello, world!");                          // Create a window called "Hello, world!" and append into it.
+            ImGui::Begin("Hello, world!", NULL, window_flags);                          // Create a window called "Hello, world!" and append into it.
 
             ImGui::Text("This is some useful text.");               // Display some text (you can use a format strings too)
-            ImGui::Checkbox("Demo Window", &show_demo_window);      // Edit bools storing our window open/close state
-            ImGui::Checkbox("Another Window", &show_another_window);
 
             ImGui::SliderFloat("float", &f, 0.0f, 1.0f);            // Edit 1 float using a slider from 0.0f to 1.0f
             ImGui::ColorEdit3("clear color", (float*)&clear_color); // Edit 3 floats representing a color
@@ -177,16 +191,12 @@ int main(int, char**)
             ImGui::Text("counter = %d", counter);
 
             ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-            ImGui::End();
-        }
 
-        // 3. Show another simple window.
-        if (show_another_window)
-        {
-            ImGui::Begin("Another Window", &show_another_window);   // Pass a pointer to our bool variable (the window will have a closing button that will clear the bool when clicked)
-            ImGui::Text("Hello from another window!");
-            if (ImGui::Button("Close Me"))
-                show_another_window = false;
+            if (ImPlot::BeginPlot("Simple Plot")) {
+                ImPlot::PlotLine("Sine Wave", x_data, y_data, 100); // Plot the line graph with the sine wave data
+                ImPlot::EndPlot();
+            }
+
             ImGui::End();
         }
 
