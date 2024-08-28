@@ -1,8 +1,10 @@
 cmake_minimum_required(VERSION 3.22)
 
-project(application LANGUAGES C CXX)
+project(test LANGUAGES C CXX)
 
 set(FILES
+  imgui_impl_dx12.cpp
+  imgui_impl_win32.cpp
   main.cpp
 )
 
@@ -11,10 +13,12 @@ add_executable(${PROJECT_NAME} ${FILES})
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
 
 target_link_libraries(${PROJECT_NAME} PRIVATE 
-    volk 
-    glfw 
-    imgui 
+    imgui
     implot
+    d3d12
+    dxgi
+    d3dcompiler   
+    dwmapi
 )
 
 if(WIN32)

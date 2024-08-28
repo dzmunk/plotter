@@ -389,16 +389,6 @@ static void FramePresent(ImGui_ImplVulkanH_Window* wd)
     wd->SemaphoreIndex = (wd->SemaphoreIndex + 1) % wd->SemaphoreCount; // Now we can use the next set of semaphores
 }
 
-// Define the callback function to handle framebuffer size changes
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
-{
-    // Ignore minimized windows (width or height = 0)
-    if (width == 0 || height == 0) return;
-
-    // Set the swap chain rebuild flag to true
-    g_SwapChainRebuild = true;
-}
-
 // Main code
 int main(int, char**)
 {
@@ -414,9 +404,6 @@ int main(int, char**)
         printf("GLFW: Vulkan Not Supported\n");
         return 1;
     }
-
-    // Register the framebuffer size callback to handle resizing
-    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
     ImVector<const char*> extensions;
     uint32_t extensions_count = 0;
@@ -502,8 +489,6 @@ int main(int, char**)
         glfwGetFramebufferSize(window, &fb_width, &fb_height);
         if (fb_width > 0 && fb_height > 0 && (g_SwapChainRebuild || g_MainWindowData.Width != fb_width || g_MainWindowData.Height != fb_height))
         {
-            g_MainWindowData.Width = fb_width;
-            g_MainWindowData.Height = fb_height;
             ImGui_ImplVulkan_SetMinImageCount(g_MinImageCount);
             ImGui_ImplVulkanH_CreateOrResizeWindow(g_Instance, g_PhysicalDevice, g_Device, &g_MainWindowData, g_QueueFamily, g_Allocator, fb_width, fb_height, g_MinImageCount);
             g_MainWindowData.FrameIndex = 0;
@@ -519,10 +504,6 @@ int main(int, char**)
         ImGui_ImplVulkan_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-
-        // Update ImGui display size
-        ImGuiIO& io = ImGui::GetIO();
-        io.DisplaySize = ImVec2(static_cast<float>(fb_width), static_cast<float>(fb_height));
 
         // 1. Show the big demo window (Most of the sample code is in ImGui::ShowDemoWindow()! You can browse its code to learn more about Dear ImGui!).
         if (show_demo_window)

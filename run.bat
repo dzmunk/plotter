@@ -1,8 +1,9 @@
 @echo off
 
-set BUILD_TYPE=Debug
-set MINGW_CXX_COMPILER_PATH=C:/msys64/mingw64/bin/x86_64-w64-mingw32-g++.exe
-set MINGW_C_COMPILER_PATH=C:/msys64/mingw64/bin/x86_64-w64-mingw32-gcc.exe
+:: set BUILD_TYPE=Debug
+set BUILD_TYPE=Release
+set MINGW_CXX_COMPILER_PATH=C:/mingw64/bin/g++.exe
+set MINGW_C_COMPILER_PATH=C:/mingw64/bin/gcc.exe
 
 mkdir build
 

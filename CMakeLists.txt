@@ -10,4 +10,5 @@ add_subdirectory(thirdparty)
 # add project application
 add_subdirectory(application)
 
+add_subdirectory(test)
 
